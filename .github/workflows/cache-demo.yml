@@ -1,0 +1,29 @@
+name: Cache Demo
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache dependencies
+        id: cache-step
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/demo
+          key: cache-2c5fe30
+
+      - name: prime-cache-2c5fe30
+        run: echo "Cache hit result - ${{ steps.cache-step.outputs.cache-hit }}"
+
+      - name: Create dummy cached file (so cache has something to save)
+        if: steps.cache-step.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/.cache/demo
+          echo "cached data" > ~/.cache/demo/data.txt
